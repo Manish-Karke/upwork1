@@ -20,14 +20,17 @@ res.status(201).json({message: "New user is registered"})
 }
 
 exports.login = async(req,res)=>{
-    const {email,password}=req.body;
+   try{ const {email,password}=req.body;
     const user = await user.findone({email})
     if(!user) return res.status(400).json({message:"email is not found"})
     
-
-    const ismatch = await bcryp.compare(password, user.password)
+//the password which is entered is compared with hashed one initally ...><++
+    const ismatch = await bcrypt.compare(password, user.password)
     if(!ismatch) return res.status(400).json({message:"password is not matched"})
 
-    const token = jwt.sign
-
-}
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
