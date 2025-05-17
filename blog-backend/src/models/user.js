@@ -1,22 +1,9 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    //you can add here user shema for db
-    username:
-    {type:String,
-        require:true,
-        unique:true,
-    },
-    email:
-    
-        {type:String,
-        require:true,
-        unique:true,
-    },
-    password:{
-        type:String,
-        require:true,
-    },
+  username: { type: String, required: true, unique: true },
+  email:    { type: String, required: true, unique: true },
+  password: { type: String, required: true },
 });
 
-module.export = mongoose.model("user",userSchema)
+module.exports = mongoose.model('User', userSchema);

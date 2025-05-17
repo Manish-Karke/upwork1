@@ -1,32 +1,30 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import user from "../models/user";
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 exports.register = async (req, res) => {
-try {
-    const {username, email, password}= req.body;
+  try {
+    const { username, email, password } = req.body;
 
-// hashing of password  is done here
-const hashing_password = await bcrypt.hash(password,10);
-const newuser = new user ({ username, email, password:hashing_password})
-await newuser.save();
-res.status(201).json({message: "New user is registered"})
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-} catch (error) {
-    res.status(500).json({message:"user can't be registred"})
-    
-}
+    const newUser = new User({ username, email, password: hashedPassword });
+    await newUser.save();
+    res.json({ message: "User registered!" });
+    res.status(201).json({ message: "User registered!" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-}
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User not found" });
 
-exports.login = async(req,res)=>{
-   try{ const {email,password}=req.body;
-    const user = await user.findone({email})
-    if(!user) return res.status(400).json({message:"email is not found"})
-    
-//the password which is entered is compared with hashed one initally ...><++
-    const ismatch = await bcrypt.compare(password, user.password)
-    if(!ismatch) return res.status(400).json({message:"password is not matched"})
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     res.json({ token });

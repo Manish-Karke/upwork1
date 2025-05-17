@@ -1,4 +1,4 @@
-import Post from "../models/post";
+import Post from "../models/post.js"
 
 export async function createPost(req,res){
 const {title,content}= req.body
@@ -20,7 +20,7 @@ export async function getAllPost(req,res){
   }
 };
 
-exports.getPost = async (req, res) => {
+export async function getPost(req, res) {
   try {
     const post = await Post.findById(req.params.id).populate('author', 'username');
     if (!post) return res.status(404).json({ message: "Post not found" });
@@ -30,7 +30,7 @@ exports.getPost = async (req, res) => {
   }
 };
 
-exports.updatePost = async (req, res) => {
+export async function updatePost(req, res) {
   try {
     const post = await Post.findById(req.params.id);
     if (!post || post.author.toString() !== req.user.id)
@@ -46,7 +46,7 @@ exports.updatePost = async (req, res) => {
   }
 };
 
-exports.deletePost = async (req, res) => {
+export async function deletePost (req, res){
   try {
     const post = await Post.findById(req.params.id);
     if (!post || post.author.toString() !== req.user.id)

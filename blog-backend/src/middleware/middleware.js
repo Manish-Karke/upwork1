@@ -1,13 +1,28 @@
-import { verify } from 'jsonwebtoken';
+// import { verify } from 'jsonwebtoken';
 
+// const authMiddleware = (req, res, next) => {
+//   const token = req.header('Authorization')?.split(" ")[1];
+//   if (!token) return res.status(401).json({ message: "Access Denied" });
 
-const authmiddleware = (req,res,next)=>{
-   
+//   try {
+//     const verified = verify(token, process.env.JWT_SECRET);
+//     req.user = verified;
+//     next();
+//   } catch (err) {
+//     res.status(400).json({ message: "Invalid Token" });
+//   }
+// };
+
+// export default authMiddleware;
+
+const jwt = require('jsonwebtoken');
+
+const authMiddleware = (req, res, next) => {
   const token = req.header('Authorization')?.split(" ")[1];
   if (!token) return res.status(401).json({ message: "Access Denied" });
 
   try {
-    const verified = verify(token, process.env.JWT_SECRET);
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = verified;
     next();
   } catch (err) {
@@ -15,4 +30,4 @@ const authmiddleware = (req,res,next)=>{
   }
 };
 
-export default authmiddleware;
+module.exports = authMiddleware;
